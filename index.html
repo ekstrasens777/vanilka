@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ванилька — кондитерская</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-inner">
+    <a href="#home" class="logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">Ванилька</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#home">Главная</a>
+      <a href="#products">Меню</a>
+      <a href="#about">О нас</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <div class="header-right">
+      <button class="cart-btn" id="cart-icon" aria-label="Корзина">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-counter" id="cart-counter" style="display:none">0</span>
+      </button>
+      <button class="burger" id="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#home" class="m-nav-link">Главная</a>
+  <a href="#products" class="m-nav-link">Меню</a>
+  <a href="#about" class="m-nav-link">О нас</a>
+  <a href="#contacts" class="m-nav-link">Контакты</a>
+</div>
+
+<!-- CART MODAL -->
+<div class="cart-overlay" id="cart-modal">
+  <div class="cart-panel">
+    <div class="cart-head">
+      <h3>Корзина</h3>
+      <button id="close-cart"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-body" id="cart-items">
+      <div class="cart-empty">
+        <i class="fas fa-shopping-bag"></i>
+        <p>Корзина пуста</p>
+      </div>
+    </div>
+    <div class="cart-foot">
+      <div class="cart-total-row">
+        <span>Итого</span>
+        <span><span id="cart-total">0</span> ₽</span>
+      </div>
+      <button class="btn-primary full-width" id="checkout-btn">Оформить заказ</button>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <img src="hero_bg.jpg" alt="Кондитерская Ванилька" id="hero-img">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Кондитерская с душой</p>
+    <h1 class="hero-title">Искусство<br><em>в каждом десерте</em></h1>
+    <p class="hero-sub">Эксклюзивные десерты из премиальных ингредиентов.<br>Французское масло, бельгийский шоколад, фермерские продукты.</p>
+    <a href="#products" class="btn-primary">Смотреть меню</a>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="products-section">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">Наше меню</p>
+      <h2>Эксклюзивные десерты</h2>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="cake">Торты</button>
+      <button class="filter-btn" data-filter="macaron">Макаруны</button>
+      <button class="filter-btn" data-filter="cupcake">Капкейки</button>
+      <button class="filter-btn" data-filter="eclair">Эклеры</button>
+      <button class="filter-btn" data-filter="cheesecake">Чизкейки</button>
+    </div>
+
+    <div class="products-grid">
+      <!-- Торты -->
+      <div class="product-card" data-category="cake">
+        <div class="product-img" style="background-image:url('tort_klubnichny.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="1" data-name="Торт «Клубничная нежность»" data-price="2400"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Торт «Клубничная нежность»</h3>
+          <p>Ванильный бисквит с клубничным кремом</p>
+          <span class="price">2 400 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cake">
+        <div class="product-img" style="background-image:url('tort_shokoladny.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="2" data-name="Торт «Шоколадный рай»" data-price="2800"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Торт «Шоколадный рай»</h3>
+          <p>Шоколадный бисквит с трюфельной начинкой</p>
+          <span class="price">2 800 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cake">
+        <div class="product-img" style="background-image:url('tort_medovy.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="3" data-name="Торт «Медовик»" data-price="2200"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Торт «Медовик»</h3>
+          <p>Классический медовый торт со сметанным кремом</p>
+          <span class="price">2 200 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cake">
+        <div class="product-img" style="background-image:url('tort_karandash.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="4" data-name="Торт «Карандаш»" data-price="3200"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Торт «Карандаш»</h3>
+          <p>Оригинальный торт необычной формы</p>
+          <span class="price">3 200 ₽/кг</span>
+        </div>
+      </div>
+      <!-- Макаруны -->
+      <div class="product-card" data-category="macaron">
+        <div class="product-img" style="background-image:url('makarun_assorti.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="5" data-name="Макаруны ассорти" data-price="180"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Макаруны ассорти</h3>
+          <p>Хрустящие миндальные пирожные</p>
+          <span class="price">180 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="macaron">
+        <div class="product-img" style="background-image:url('makarun_fistashka.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="6" data-name="Макаруны фисташка" data-price="200"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Макаруны фисташка</h3>
+          <p>Нежные фисташковые макаруны</p>
+          <span class="price">200 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="macaron">
+        <div class="product-img" style="background-image:url('makarun_shokolad.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="7" data-name="Макаруны шоколад" data-price="200"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Макаруны шоколад</h3>
+          <p>Шоколадные макаруны с ганашем</p>
+          <span class="price">200 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="macaron">
+        <div class="product-img" style="background-image:url('makarun_yagody.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="8" data-name="Макаруны ягоды" data-price="190"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Макаруны ягоды</h3>
+          <p>Ягодные макаруны с фруктовым кремом</p>
+          <span class="price">190 ₽/шт</span>
+        </div>
+      </div>
+      <!-- Капкейки -->
+      <div class="product-card" data-category="cupcake">
+        <div class="product-img" style="background-image:url('kapkeik_vanil.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="9" data-name="Капкейк ванильный" data-price="420"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Капкейк ванильный</h3>
+          <p>Воздушные капкейки с ванильным кремом</p>
+          <span class="price">420 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cupcake">
+        <div class="product-img" style="background-image:url('kapkeik_shokolad.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="10" data-name="Капкейк шоколадный" data-price="450"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Капкейк шоколадный</h3>
+          <p>Шоколадные капкейки с насыщенным кремом</p>
+          <span class="price">450 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cupcake">
+        <div class="product-img" style="background-image:url('kapkeik_krasny.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="11" data-name="Капкейк красный бархат" data-price="480"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Капкейк красный бархат</h3>
+          <p>Красный бархат с нежным сырным кремом</p>
+          <span class="price">480 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cupcake">
+        <div class="product-img" style="background-image:url('kapkeik_kokos.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="12" data-name="Капкейк кокос" data-price="430"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Капкейк кокос</h3>
+          <p>Кокосовые капкейки с нежным кремом</p>
+          <span class="price">430 ₽/шт</span>
+        </div>
+      </div>
+      <!-- Эклеры -->
+      <div class="product-card" data-category="eclair">
+        <div class="product-img" style="background-image:url('ekler_shokolad.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="13" data-name="Эклер шоколадный" data-price="320"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Эклер шоколадный</h3>
+          <p>Заварное пирожное с бельгийским шоколадом</p>
+          <span class="price">320 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="eclair">
+        <div class="product-img" style="background-image:url('ekler_vanil.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="14" data-name="Эклер ванильный" data-price="290"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Эклер ванильный</h3>
+          <p>Эклер с нежным ванильным кремом</p>
+          <span class="price">290 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="eclair">
+        <div class="product-img" style="background-image:url('ekler_kofe.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="15" data-name="Эклер кофейный" data-price="330"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Эклер кофейный</h3>
+          <p>Эклер с насыщенным кофейным кремом</p>
+          <span class="price">330 ₽/шт</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="eclair">
+        <div class="product-img" style="background-image:url('ekler_yagoda.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="16" data-name="Эклер ягодный" data-price="310"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Эклер ягодный</h3>
+          <p>Эклер с ягодным кремом и свежими ягодами</p>
+          <span class="price">310 ₽/шт</span>
+        </div>
+      </div>
+      <!-- Чизкейки -->
+      <div class="product-card" data-category="cheesecake">
+        <div class="product-img" style="background-image:url('chizkeik_nyu_york.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="17" data-name="Чизкейк Нью-Йорк" data-price="2100"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Чизкейк Нью-Йорк</h3>
+          <p>Классический чизкейк с ягодным соусом</p>
+          <span class="price">2 100 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cheesecake">
+        <div class="product-img" style="background-image:url('chizkeik_shokolad.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="18" data-name="Чизкейк шоколадный" data-price="2300"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Чизкейк шоколадный</h3>
+          <p>Шоколадный чизкейк с ганашем</p>
+          <span class="price">2 300 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cheesecake">
+        <div class="product-img" style="background-image:url('chizkeik_yagodny.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="19" data-name="Чизкейк ягодный" data-price="2150"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Чизкейк ягодный</h3>
+          <p>Чизкейк с ягодным соусом</p>
+          <span class="price">2 150 ₽/кг</span>
+        </div>
+      </div>
+      <div class="product-card" data-category="cheesecake">
+        <div class="product-img" style="background-image:url('chizkeik_karamel.jpg')">
+          <button class="card-cart-btn add-to-cart" data-id="20" data-name="Чизкейк карамельный" data-price="2200"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="product-info">
+          <h3>Чизкейк карамельный</h3>
+          <p>Чизкейк с карамельным топпингом</p>
+          <span class="price">2 200 ₽/кг</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <img src="about_us.jpg" alt="О нас" class="about-img">
+        <div class="about-badge">с 2026 года</div>
+      </div>
+      <div class="about-text">
+        <p class="section-label">О нас</p>
+        <h2>Мы создаём десерты,<br><em>которые запоминаются</em></h2>
+        <p>Кондитерская «Ванилька» с маленькой домашней кухней. Мы с любовью относимся к нашим изделиям и мы сохранили ручной подход к каждому десерту.</p>
+        <p>Мы используем только премиальные ингредиенты: французское масло, бельгийский шоколад, итальянскую муку и свежие фермерские продукты. Никаких консервантов и искусственных добавок.</p>
+        <div class="about-facts">
+          <div class="fact"><span class="fact-num">1+</span><span class="fact-label">лет опыта</span></div>
+          <div class="fact"><span class="fact-num">1+</span><span class="fact-label">довольных клиентов</span></div>
+          <div class="fact"><span class="fact-num">50+</span><span class="fact-label">видов десертов</span></div>
+        </div>
+        <a href="#contacts" class="btn-primary">Связаться с нами</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTS -->
+<section id="contacts" class="contacts-section">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">Контакты</p>
+      <h2>Свяжитесь с нами</h2>
+    </div>
+    <div class="contacts-grid">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div><h4>Адрес</h4><p>г. Саранск, Транспортная ул., 11</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-phone"></i></div>
+          <div><h4>Телефон</h4><p>+7 (906) 163-19-99</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+          <div><h4>Email</h4><p>oreogog234@gmail.com</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-clock"></i></div>
+          <div><h4>Режим работы</h4><p>Пн–Пт: 9:00–21:00</p><p>Сб–Вс: 10:00–20:00</p></div>
+        </div>
+      </div>
+      <div class="order-form-wrap">
+        <h3>Форма заказа</h3>
+        <form id="orderForm">
+          <div class="form-group">
+            <label for="name">Ваше имя *</label>
+            <input type="text" id="name" required placeholder="Иван Иванов">
+          </div>
+          <div class="form-group">
+            <label for="phone">Телефон *</label>
+            <input type="tel" id="phone" required placeholder="+7 (999) 123-45-67">
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" required placeholder="example@mail.ru">
+          </div>
+          <div class="form-group">
+            <label for="message">Ваш заказ *</label>
+            <textarea id="message" required placeholder="Опишите, что вы хотели бы заказать, дату и время..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary full-width">Отправить заказ</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">Ванилька</span>
+      <p>Кондитерская с душой.<br>Саранск, Транспортная ул., 11</p>
+    </div>
+    <div class="footer-links">
+      <a href="#home">Главная</a>
+      <a href="#products">Меню</a>
+      <a href="#about">О нас</a>
+      <a href="#contacts">Контакты</a>
+      <a href="admin.html" id="admin-link">Администрация</a>
+    </div>
+    <div class="footer-contacts">
+      <p><i class="fas fa-phone"></i> +7 (906) 163-19-99</p>
+      <p><i class="fas fa-envelope"></i> oreogog234@gmail.com</p>
+      <p><i class="fas fa-clock"></i> Пн–Пт 9:00–21:00</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Кондитерская «Ванилька». Все права защищены.</p>
+  </div>
+</footer>
+
+<!-- NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

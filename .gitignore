@@ -1,0 +1,4 @@
+node_modules/
+vanilka.db
+*.db
+.env
