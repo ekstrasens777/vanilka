@@ -14,9 +14,16 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 
 // ==================== ПОДКЛЮЧЕНИЕ К SUPABASE ====================
-// Используйте Connection string из Supabase
+// Используем DATABASE_URL или DIRECT_DATABASE_URL из переменных Railway
+const databaseUrl = process.env.DATABASE_URL || process.env.DIRECT_DATABASE_URL;
+
+if (!databaseUrl) {
+    console.error('❌ Ошибка: DATABASE_URL или DIRECT_DATABASE_URL не найдены в переменных окружения');
+    process.exit(1);
+}
+
 const pool = new Pool({
-    connectionString: process.env.SUPABASE_DATABASE_URL,
+    connectionString: databaseUrl,
     ssl: {
         rejectUnauthorized: false
     }
