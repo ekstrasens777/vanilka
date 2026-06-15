@@ -2,9 +2,6 @@ const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const path = require('path');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8008;
@@ -13,38 +10,16 @@ const PORT = process.env.PORT || 8008;
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 
-// ==================== ПОДКЛЮЧЕНИЕ К SUPABASE ====================
-// Используем DATABASE_URL или DIRECT_DATABASE_URL из переменных Railway
-const databaseUrl = process.env.DATABASE_URL || process.env.DIRECT_DATABASE_URL;
-
-if (!databaseUrl) {
-    console.error('❌ Ошибка: DATABASE_URL или DIRECT_DATABASE_URL не найдены в переменных окружения');
-    process.exit(1);
-}
-
+// ==================== БАЗА ДАННЫХ (PostgreSQL / Supabase) ====================
 const pool = new Pool({
-    connectionString: databaseUrl,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
-
-// Проверка подключения
-pool.connect((err, client, release) => {
-    if (err) {
-        console.error('❌ Ошибка подключения к Supabase:', err.message);
-        process.exit(1);
-    } else {
-        console.log('✅ Подключено к Supabase PostgreSQL');
-        release();
-        initializeDatabase();
-    }
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
 });
 
 async function initializeDatabase() {
+    const client = await pool.connect();
     try {
-        // Создание таблиц
-        await pool.query(`
+        await client.query(`
             CREATE TABLE IF NOT EXISTS products (
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -56,7 +31,7 @@ async function initializeDatabase() {
             )
         `);
 
-        await pool.query(`
+        await client.query(`
             CREATE TABLE IF NOT EXISTS orders (
                 id TEXT PRIMARY KEY,
                 customer_name TEXT NOT NULL,
@@ -69,7 +44,7 @@ async function initializeDatabase() {
             )
         `);
 
-        await pool.query(`
+        await client.query(`
             CREATE TABLE IF NOT EXISTS customers (
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -82,7 +57,7 @@ async function initializeDatabase() {
             )
         `);
 
-        await pool.query(`
+        await client.query(`
             CREATE TABLE IF NOT EXISTS admins (
                 id SERIAL PRIMARY KEY,
                 username TEXT UNIQUE NOT NULL,
@@ -92,16 +67,16 @@ async function initializeDatabase() {
         `);
 
         // Создаём дефолтного админа если нет
-        const adminCheck = await pool.query("SELECT * FROM admins WHERE username = 'admin'");
-        if (adminCheck.rows.length === 0) {
+        const adminExists = await client.query("SELECT * FROM admins WHERE username = 'admin'");
+        if (adminExists.rows.length === 0) {
             const adminPass = process.env.ADMIN_PASSWORD || 'vanilka2024';
-            await pool.query("INSERT INTO admins (username, password) VALUES ('admin', $1)", [adminPass]);
+            await client.query("INSERT INTO admins (username, password) VALUES ('admin', $1)", [adminPass]);
             console.log('👑 Создан администратор: admin / ' + adminPass);
         }
 
         // Тестовые товары если таблица пуста
-        const productCount = await pool.query("SELECT COUNT(*) as count FROM products");
-        if (productCount.rows[0].count === 0) {
+        const countResult = await client.query("SELECT COUNT(*) as count FROM products");
+        if (parseInt(countResult.rows[0].count) === 0) {
             const products = [
                 ['Торт "Клубничная нежность"', 'Нежный ванильный бисквит с клубничным кремом', 2400, 'cake', 'tort_klubnichny.jpg'],
                 ['Торт "Шоколадный рай"', 'Шоколадный бисквит с трюфельной начинкой', 2800, 'cake', 'tort_shokoladny.jpg'],
@@ -121,21 +96,21 @@ async function initializeDatabase() {
                 ['Эклер ягодный', 'Эклер с ягодным кремом', 310, 'eclair', 'ekler_yagoda.jpg'],
                 ['Чизкейк Нью-Йорк', 'Классический чизкейк с ягодным соусом', 2100, 'cheesecake', 'chizkeik_nyu_york.jpg'],
                 ['Чизкейк шоколадный', 'Шоколадный чизкейк', 2300, 'cheesecake', 'chizkeik_shokolad.jpg'],
-                ['Чизкейк карамельный', 'Чизкейк с карамельным топпингом', 2200, 'cheesecake', 'chizkeik_karamel.jpg']
+                ['Чизкейк карамельный', 'Чизкейк с карамельным топпингом', 2200, 'cheesecake', 'chizkeik_karamel.jpg'],
+                ['Чизкейк ягодный', 'Чизкейк с ягодным соусом', 2150, 'cheesecake', 'chizkeik_yagodny.jpg'],
             ];
-            
-            for (const product of products) {
-                await pool.query(
+            for (const p of products) {
+                await client.query(
                     "INSERT INTO products (name, description, price, category, image_url) VALUES ($1, $2, $3, $4, $5)",
-                    product
+                    p
                 );
             }
             console.log('🛒 Добавлены тестовые товары');
         }
 
         console.log('✅ База данных инициализирована');
-    } catch (err) {
-        console.error('❌ Ошибка инициализации БД:', err);
+    } finally {
+        client.release();
     }
 }
 
@@ -170,9 +145,8 @@ app.post('/api/orders', async (req, res) => {
         );
 
         // Обновляем/создаём клиента
-        const customer = await pool.query("SELECT * FROM customers WHERE email = $1", [customer_email]);
-        
-        if (customer.rows.length > 0) {
+        const existing = await pool.query("SELECT * FROM customers WHERE email = $1", [customer_email]);
+        if (existing.rows.length > 0) {
             await pool.query(
                 `UPDATE customers SET orders_count = orders_count + 1,
                  total_spent = total_spent + $1, last_order = $2 WHERE email = $3`,
@@ -195,17 +169,13 @@ app.post('/api/orders', async (req, res) => {
 // 3. Все заказы
 app.get('/api/orders', async (req, res) => {
     const { status } = req.query;
-    let query = "SELECT * FROM orders";
-    const params = [];
-
-    if (status && status !== 'all') {
-        query += " WHERE status = $1";
-        params.push(status);
-    }
-    query += " ORDER BY created_at DESC";
-
     try {
-        const result = await pool.query(query, params);
+        let result;
+        if (status && status !== 'all') {
+            result = await pool.query("SELECT * FROM orders WHERE status = $1 ORDER BY created_at DESC", [status]);
+        } else {
+            result = await pool.query("SELECT * FROM orders ORDER BY created_at DESC");
+        }
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -244,9 +214,11 @@ app.get('/api/customers', async (req, res) => {
 // 6. Авторизация
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
-        const result = await pool.query("SELECT * FROM admins WHERE username = $1 AND password = $2", [username, password]);
+        const result = await pool.query(
+            "SELECT * FROM admins WHERE username = $1 AND password = $2",
+            [username, password]
+        );
         if (result.rows.length > 0) {
             res.json({ success: true, user: { username: result.rows[0].username } });
         } else {
@@ -260,10 +232,9 @@ app.post('/api/login', async (req, res) => {
 // 7. Статистика
 app.get('/api/stats', async (req, res) => {
     try {
-        const orderStats = await pool.query("SELECT COUNT(*) as total_orders, COALESCE(SUM(total), 0) as total_revenue FROM orders");
+        const orderStats = await pool.query("SELECT COUNT(*) as total_orders, SUM(total) as total_revenue FROM orders");
         const custStats = await pool.query("SELECT COUNT(*) as total_customers FROM customers");
         const newOrders = await pool.query("SELECT COUNT(*) as new_orders FROM orders WHERE status = 'new'");
-        
         res.json({
             total_orders: parseInt(orderStats.rows[0].total_orders) || 0,
             total_revenue: parseInt(orderStats.rows[0].total_revenue) || 0,
@@ -279,12 +250,10 @@ app.get('/api/stats', async (req, res) => {
 app.get('/api/export/orders', async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM orders ORDER BY created_at DESC");
-        
         let csv = 'ID,Имя,Телефон,Email,Сумма,Статус,Дата\n';
         result.rows.forEach(o => {
             csv += `"${o.id}","${o.customer_name}","${o.customer_phone}","${o.customer_email}",${o.total},"${o.status}","${o.created_at}"\n`;
         });
-
         res.header('Content-Type', 'text/csv; charset=utf-8');
         res.header('Content-Disposition', 'attachment; filename="orders_export.csv"');
         res.send('\uFEFF' + csv);
@@ -298,10 +267,17 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
 // ==================== ЗАПУСК ====================
-app.listen(PORT, () => {
-    console.log('='.repeat(50));
-    console.log(`✅ Сервер запущен на порту ${PORT}`);
-    console.log(`🌐 Сайт:    http://localhost:${PORT}/`);
-    console.log(`🔧 Админка: http://localhost:${PORT}/admin.html`);
-    console.log('='.repeat(50));
-});
+initializeDatabase()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log('='.repeat(50));
+            console.log(`✅ Сервер запущен на порту ${PORT}`);
+            console.log(`🌐 Сайт:    http://localhost:${PORT}/`);
+            console.log(`🔧 Админка: http://localhost:${PORT}/admin.html`);
+            console.log('='.repeat(50));
+        });
+    })
+    .catch(err => {
+        console.error('❌ Ошибка инициализации БД:', err.message);
+        process.exit(1);
+    });
